@@ -14,12 +14,15 @@ func main() {
 		cellFull  = '⚾'
 		maxFrames = 1200
 		speed     = time.Second / 20
+		// initial velocities
+		ivx, ivy = 5, 2
 	)
 
 	var (
-		cell   rune
-		vx, vy = 1, 1
-		px, py int
+		cell     rune
+		vx, vy   = ivx, ivx // velocities
+		px, py   int        // ball position
+		ppx, ppy int        // previous ball position
 	)
 
 	// Get size of screen dynamically
@@ -42,31 +45,31 @@ func main() {
 		py += vy
 
 		// Redirect ball
-		if px <= 0 || px >= width-1 {
+		if px <= 0 || px >= width-ivx {
 			vx *= -1
 		}
-		if py <= 0 || py >= height-1 {
+		if py <= 0 || py >= height-ivx {
 			vy *= -1
 		}
 
-		// remove previous ball
-		for y := range board[0] {
-			for x := range board {
-				board[x][y] = false
-			}
-		}
+		// remove the previous ball and put the new ball
+		board[px][py], board[ppx][ppy] = true, false
+
+		// save the previous positions
+		ppx, ppy = px, py
 
 		// set ball position
 		board[px][py] = true
+
 		// drawing buffer length
 		// *2 for extra spaces
 		// +1 for newlines
 		bufLen := (width*2 + 1) * height
+
 		// Use buffer for performance
 		buf := make([]rune, 0, bufLen)
-		// Slice buffer slice to 0 length.
-		// This keeps the backing array the same with the len and cap
-		// to ensure we're using the same buffer each time.
+
+		// rewind the buffer (allow appending from the beginning)
 		buf = buf[:0]
 
 		for y := range board[0] {
