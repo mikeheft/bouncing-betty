@@ -5,20 +5,15 @@ import (
 	"time"
 
 	"github.com/inancgumus/screen"
+	"github.com/mattn/go-runewidth"
 )
 
 func main() {
 	const (
-		width     = 50
-		height    = 10
 		cellEmpty = ' '
 		cellFull  = '⚾'
 		maxFrames = 1200
 		speed     = time.Second / 20
-		// drawing buffer length
-		// *2 for extra spaces
-		// +1 for newlines
-		bufLen = (width*2 + 1) * height
 	)
 
 	var (
@@ -26,6 +21,14 @@ func main() {
 		vx, vy = 1, 1
 		px, py int
 	)
+
+	// Get size of screen dynamically
+	width, height := screen.Size()
+	// get the rune width of the ball emoji
+	ballWidth := runewidth.RuneWidth(cellFull)
+	// adjust the width and height
+	width /= ballWidth
+
 	board := make([][]bool, width)
 	for row := range board {
 		board[row] = make([]bool, height)
@@ -55,6 +58,10 @@ func main() {
 
 		// set ball position
 		board[px][py] = true
+		// drawing buffer length
+		// *2 for extra spaces
+		// +1 for newlines
+		bufLen := (width*2 + 1) * height
 		// Use buffer for performance
 		buf := make([]rune, 0, bufLen)
 		// Slice buffer slice to 0 length.
