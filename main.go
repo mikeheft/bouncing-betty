@@ -15,6 +15,10 @@ func main() {
 		cellFull  = '⚾'
 		maxFrames = 1200
 		speed     = time.Second / 20
+		// drawing buffer length
+		// *2 for extra spaces
+		// +1 for newlines
+		bufLen = (width*2 + 1) * height
 	)
 
 	var (
@@ -52,7 +56,7 @@ func main() {
 		// set ball position
 		board[px][py] = true
 		// Use buffer for performance
-		buf := make([]rune, 0, width*height)
+		buf := make([]rune, 0, bufLen)
 		// Slice buffer slice to 0 length.
 		// This keeps the backing array the same with the len and cap
 		// to ensure we're using the same buffer each time.
